@@ -1,0 +1,301 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {
+    "collapsed": true,
+    "scrolled": false
+   },
+   "outputs": [],
+   "source": [
+    "import requests\n",
+    "\n",
+    "payload = {\n",
+    "    'corpId': 469,\n",
+    "    'winMin': 1.1,\n",
+    "    'winMax': 1.4,\n",
+    "    'drawMin': None,\n",
+    "    'drawMax': None,\n",
+    "    'lostMin': None,\n",
+    "    'lostMax': None,\n",
+    "    'indOddType': 0,\n",
+    "    'gameId': -1,\n",
+    "    'showcount': 500\n",
+    "}\n",
+    "response = requests.post('http://d.dacai.com/huicha/peilv.html', params=payload)\n",
+    "\n",
+    "content_json = response.json()\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "text=requests.get('http://d.dacai.com/huicha/peilv.html')\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "bifen=content_json['SelectIndOddCorps']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as py\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "a=pd.DataFrame(bifen[0:2])#at least or a=pd.DataFrame.from_records([b1])\n",
+    "a=pd.DataFrame.from_records([bifen[0]])#创造第一个\n",
+    "for i in range(len(bifen)):\n",
+    "    add=pd.DataFrame.from_records([bifen[i]])\n",
+    "    a=[a,add]\n",
+    "    a=pd.concat(a)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def getwin(winmin,winmax):\n",
+    "    import requests\n",
+    "    payload = {\n",
+    "        'corpId': 469,\n",
+    "        'winMin': winmin,\n",
+    "        'winMax': winmax,\n",
+    "        'drawMin': None,\n",
+    "        'drawMax': None,\n",
+    "        'lostMin': None,\n",
+    "        'lostMax': None,\n",
+    "        'indOddType': 0,\n",
+    "        'gameId': -1,\n",
+    "        'showcount': 500\n",
+    "     }\n",
+    "    response = requests.post('http://d.dacai.com/huicha/peilv.html', params=payload)\n",
+    "\n",
+    "    content_json = response.json()\n",
+    "    bifen=content_json['SelectIndOddCorps']\n",
+    "    import numpy as py\n",
+    "    import pandas as pd\n",
+    "    a=pd.DataFrame.from_records([bifen[0]])#创造第一个\n",
+    "    for i in range(len(bifen)):\n",
+    "        add=pd.DataFrame.from_records([bifen[i]])\n",
+    "        a=[a,add]\n",
+    "        a=pd.concat(a)\n",
+    "    return(a)\n",
+    "    \n",
+    "    \n",
+    "    \n",
+    "\n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "re1=getwin(1.4,1.7)\n",
+    "re1.to_csv(\"1.4,1.7.csv\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "re1=getwin(1.7,2.0)\n",
+    "re1.to_csv(\"1.7,2.0.csv\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(7404, 20)"
+      ]
+     },
+     "execution_count": 41,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "first1=pd.DataFrame.from_records([bifen[0]])\n",
+    "for i in range(11,55,3):\n",
+    "    new=getwin(i/10,(i+3)/10)\n",
+    "    first1=[first1,new]\n",
+    "    first1=pd.concat(first1)\n",
+    "first1.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "first1.to_csv(\"1.1to5.5(7404).csv\")  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>AwayGoals</th>\n",
+       "      <th>AwayHalfGoals</th>\n",
+       "      <th>AwayName</th>\n",
+       "      <th>AwayTeamId</th>\n",
+       "      <th>ChuDraw</th>\n",
+       "      <th>ChuLose</th>\n",
+       "      <th>ChuWin</th>\n",
+       "      <th>Color</th>\n",
+       "      <th>CorpId</th>\n",
+       "      <th>DrawOdds</th>\n",
+       "      <th>GameId</th>\n",
+       "      <th>GameName</th>\n",
+       "      <th>HomeGoals</th>\n",
+       "      <th>HomeHalfGoals</th>\n",
+       "      <th>HomeName</th>\n",
+       "      <th>HomeTeamId</th>\n",
+       "      <th>LoseOdds</th>\n",
+       "      <th>MatchId</th>\n",
+       "      <th>StartTime</th>\n",
+       "      <th>WinOdds</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>欧本21</td>\n",
+       "      <td>15124</td>\n",
+       "      <td>4.5</td>\n",
+       "      <td>7.0</td>\n",
+       "      <td>1.33</td>\n",
+       "      <td>B5FF8A</td>\n",
+       "      <td>469</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>889</td>\n",
+       "      <td>比U21</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>亨克21</td>\n",
+       "      <td>14214</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>2175030</td>\n",
+       "      <td>/Date(1511870400000)/</td>\n",
+       "      <td>1.25</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   AwayGoals  AwayHalfGoals AwayName  AwayTeamId  ChuDraw  ChuLose  ChuWin  \\\n",
+       "0          1              0     欧本21       15124      4.5      7.0    1.33   \n",
+       "\n",
+       "    Color  CorpId  DrawOdds  GameId GameName  HomeGoals  HomeHalfGoals  \\\n",
+       "0  B5FF8A     469       5.0     889     比U21          3              1   \n",
+       "\n",
+       "  HomeName  HomeTeamId  LoseOdds  MatchId              StartTime  WinOdds  \n",
+       "0     亨克21       14214       9.0  2175030  /Date(1511870400000)/     1.25  "
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "first1=pd.DataFrame.from_records([bifen[0]])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
